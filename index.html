@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="雪人球星卡">
+<meta name="theme-color" content="#0a0a12">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⛄</text></svg>">
+<title>雪人球星卡</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+::-webkit-scrollbar{display:none}
+body{
+  font-family:'PingFang SC','Noto Sans SC','Microsoft YaHei','Helvetica Neue',sans-serif;
+  background:#0a0a12;color:#e0ddd8;min-height:100vh;min-height:100dvh;
+  max-width:480px;margin:0 auto;overflow-x:hidden;padding-bottom:80px;
+}
+input,select,textarea{font-family:inherit}
+input::placeholder,textarea::placeholder{color:#444}
+.header{padding:20px 20px 14px;background:linear-gradient(160deg,#12121e,#181830);border-bottom:1px solid #1e1e30;position:sticky;top:0;z-index:50}
+.header-row{display:flex;justify-content:space-between;align-items:center}
+.logo{font-size:20px;font-weight:800;background:linear-gradient(135deg,#4fc3f7,#81d4fa);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.subtitle{font-size:11px;color:#444;margin-top:2px}
+.hp-val{font-size:20px;font-weight:800}
+.hp-label{font-size:10px;color:#444}
+.section{padding:12px 16px}
+.section-title{font-size:13px;font-weight:700;color:#777;margin-bottom:10px;letter-spacing:1px;display:flex;align-items:center;justify-content:space-between}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:14px 16px 6px}
+.stat-box{background:linear-gradient(160deg,#161622,#1c1c30);border-radius:16px;padding:14px 16px}
+.stat-label{font-size:10px;color:#777;margin-bottom:4px;letter-spacing:1px;text-transform:uppercase}
+.stat-value{font-size:22px;font-weight:800;letter-spacing:-1px}
+.stat-sub{font-size:10px;color:#555;margin-top:2px}
+.tag{display:inline-block;padding:2px 10px;border-radius:20px;font-size:10px;font-weight:600;color:#fff;white-space:nowrap}
+.card-row{background:#13131f;border-radius:14px;padding:12px 14px;margin-bottom:8px;border:1px solid #1e1e30}
+.card-row-inner{display:flex;justify-content:space-between;align-items:flex-start}
+.card-info{flex:1}
+.card-player{font-size:15px;font-weight:700;color:#eee}
+.card-id{font-size:10px;color:#444;font-family:monospace;margin-left:6px}
+.card-tags{display:flex;gap:4px;margin-top:6px;flex-wrap:wrap;align-items:center}
+.card-meta{font-size:10px;color:#444;margin-top:5px}
+.card-actions{text-align:right;min-width:80px}
+.btn-sell{background:linear-gradient(135deg,#00b894,#00a381);border:none;color:#fff;padding:7px 14px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer}
+.btn-del{background:#222;border:none;color:#555;padding:7px 8px;border-radius:8px;font-size:11px;cursor:pointer}
+.btn-primary{background:linear-gradient(135deg,#4fc3f7,#0288d1);border:none;color:#fff;padding:14px;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;width:100%;letter-spacing:1px}
+.btn-secondary{background:#2a2a3e;border:none;color:#fff;padding:14px;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;width:100%}
+.input{background:#161622;border:1px solid #2a2a3e;border-radius:12px;padding:13px 14px;color:#e0ddd8;font-size:15px;width:100%;outline:none}
+.input-label{font-size:11px;color:#555;margin-bottom:4px}
+.input-group{margin-bottom:12px}
+.input-row{display:flex;gap:10px}
+.chip-row{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:10px}
+.chip{padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;background:#1e1e30;color:#666;border:none;cursor:pointer;white-space:nowrap}
+.chip.active{background:#4fc3f7;color:#fff}
+.bar-track{height:4px;background:#1e1e30;border-radius:4px;overflow:hidden;margin-top:4px}
+.bar-fill{height:100%;background:linear-gradient(90deg,#4fc3f7,#81d4fa);border-radius:4px}
+.team-row{margin-bottom:10px}.team-row:last-child{margin-bottom:0}
+.team-header{display:flex;justify-content:space-between;margin-bottom:4px}
+.team-name{font-size:13px;color:#bbb}
+.team-profit{font-size:13px;color:#00b894;font-weight:700}
+.type-grid{display:flex;gap:8px;flex-wrap:wrap}
+.type-card{background:#13131f;border-radius:14px;padding:12px 14px;flex:1 1 43%;min-width:110px}
+.type-profit{font-size:18px;font-weight:800;color:#eee;margin-top:6px}
+.type-count{font-size:10px;color:#555}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.85);display:flex;align-items:flex-end;justify-content:center;z-index:200}
+.modal-center{position:fixed;inset:0;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;z-index:200;padding:20px}
+.modal-sheet{background:#161622;border-radius:24px 24px 0 0;padding:24px 20px 32px;width:100%;max-width:480px;border:1px solid #2a2a3e;border-bottom:none;max-height:85vh;overflow-y:auto;animation:slideUp .3s ease}
+.modal-box{background:#161622;border-radius:24px;padding:28px 24px;width:100%;max-width:380px;border:1px solid #2a2a3e}
+.modal-handle{width:40px;height:4px;background:#333;border-radius:4px;margin:0 auto 20px}
+.modal-title{font-size:20px;font-weight:800;margin-bottom:6px}
+.profit-preview{border-radius:12px;padding:12px 16px;margin-bottom:16px;text-align:center}
+.profit-preview-val{font-size:22px;font-weight:800}
+.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:rgba(10,10,18,.95);border-top:1px solid #1a1a2a;display:flex;justify-content:space-around;align-items:center;padding:8px 0 env(safe-area-inset-bottom,20px);z-index:100}
+.nav-btn{background:none;border:none;color:#444;font-size:10px;font-weight:400;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 12px}
+.nav-btn.active{color:#4fc3f7;font-weight:700}
+.nav-btn .icon{font-size:20px}
+.nav-add{background:linear-gradient(135deg,#4fc3f7,#0288d1);border:none;width:48px;height:48px;border-radius:16px;color:#fff;font-size:24px;font-weight:300;cursor:pointer;box-shadow:0 4px 15px rgba(79,195,247,.4);display:flex;align-items:center;justify-content:center;margin-top:-10px}
+.toast{position:fixed;top:60px;left:50%;transform:translateX(-50%);background:#2a2a44;color:#fff;padding:10px 24px;border-radius:12px;font-size:14px;font-weight:600;z-index:999;box-shadow:0 4px 20px rgba(0,0,0,.5);animation:fadeIn .2s ease}
+.batch-area{background:#161622;border:1px solid #2a2a3e;border-radius:12px;padding:13px 14px;color:#e0ddd8;font-size:13px;width:100%;outline:none;min-height:120px;resize:vertical;font-family:monospace;line-height:1.6}
+.empty{text-align:center;color:#333;padding:60px 20px;font-size:14px}
+.login-page{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;min-height:100dvh;padding:24px}
+.login-icon{font-size:56px;margin-bottom:12px}
+.login-title{font-size:26px;font-weight:800;background:linear-gradient(135deg,#4fc3f7,#81d4fa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:4px}
+.login-sub{font-size:13px;color:#555;margin-bottom:36px}
+.login-user-btn{display:flex;align-items:center;gap:12px;width:100%;padding:14px 18px;margin-bottom:8px;background:#13131f;border:1px solid #ffffff11;border-radius:14px;color:#eee;font-size:16px;font-weight:700;cursor:pointer;text-align:left}
+.login-user-count{margin-left:auto;font-size:11px;color:#555;font-weight:400}
+.login-section{width:100%;max-width:320px}
+.login-label{font-size:12px;color:#666;margin-bottom:10px;text-align:center}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+const CARD_TYPES=["签字卡","带编卡","普卡","球衣卡","特卡","其他"];
+const CSL_TEAMS=["山东泰山","上海海港","广州队","北京国安","浙江队","成都蓉城","武汉三镇","长春亚泰","天津津门虎","河南队","深圳新鹏城","梅州客家","沧州雄狮","南通支云","大连人","青岛海牛"];
+const PLATFORMS=["卡淘","TC卡藏","闲鱼","贴吧","微信","其他"];
+const SELL_PLATFORMS=["抖音直播","闲鱼","微信","其他"];
+const TC={"签字卡":"#e74c3c","带编卡":"#f0932b","普卡":"#636e72","球衣卡":"#6c5ce7","特卡":"#00b894","其他":"#636e72"};
+const UC=["#4fc3f7","#f0932b","#6c5ce7","#00b894","#e74c3c","#d63031"];
+const UA=["⛄","🔥","💎","🌟","⚡","🎯"];
+const SK="xr_cards_v1",SU="xr_users_v1",SC="xr_cur_v1";
+
+function gid(p){const n=Date.now().toString(36).slice(-4).toUpperCase(),r=Math.random().toString(36).slice(2,5).toUpperCase();return(p||"XR")+"-"+n+r}
+function fmt(n){return"¥"+Number(n||0).toFixed(2)}
+function sh(n){const v=Number(n||0);return Math.abs(v)>=1e4?"¥"+(v/1e4).toFixed(1)+"万":"¥"+v.toFixed(0)}
+function fd(d){if(!d)return"";const t=new Date(d);return(t.getMonth()+1)+"/"+t.getDate()}
+function da(d){return Math.floor((Date.now()-new Date(d).getTime())/864e5)}
+function td(){return new Date().toISOString().split("T")[0]}
+function tc(t){return TC[t]||"#636e72"}
+function esc(s){const d=document.createElement("div");d.textContent=s;return d.innerHTML}
+
+let cards=JSON.parse(localStorage.getItem(SK)||"[]");
+let users=JSON.parse(localStorage.getItem(SU)||"[]");
+let cur=localStorage.getItem(SC)||null;
+let view="dashboard",search="",fType="全部",fOwner="全部",tTimer=null;
+
+function save(){localStorage.setItem(SK,JSON.stringify(cards));localStorage.setItem(SU,JSON.stringify(users));if(cur)localStorage.setItem(SC,cur)}
+function cu(){return users.find(u=>u.id===cur)}
+function toast(m){clearTimeout(tTimer);let t=document.getElementById("toast");if(!t){t=document.createElement("div");t.id="toast";t.className="toast";document.body.appendChild(t)}t.textContent=m;t.style.display="block";tTimer=setTimeout(()=>{t.style.display="none"},2e3)}
+
+function render(){
+  const a=document.getElementById("app");
+  if(!cur||!users.find(u=>u.id===cur)){a.innerHTML=rLogin()}
+  else{a.innerHTML=rHeader()+rContent()+rNav()}
+  bind();
+}
+
+function rLogin(){
+  let ub="";
+  users.forEach(u=>{
+    const cnt=cards.filter(c=>c.owner===u.id).length;
+    ub+=`<button class="login-user-btn" onclick="loginAs('${esc(u.id)}')"><span style="font-size:24px">${u.avatar}</span><span>${esc(u.name)}</span><span class="login-user-count">${cnt}张卡</span></button>`;
+  });
+  return`<div class="login-page">
+    <div class="login-icon">⛄</div>
+    <div class="login-title">雪人球星卡</div>
+    <div class="login-sub">中超球星卡 · 利润追踪管理</div>
+    ${users.length>0?`<div class="login-section" style="margin-bottom:24px"><div class="login-label">选择你的身份</div>${ub}</div>`:""}
+    <div class="login-section">
+      <div class="login-label">${users.length>0?"或添加新成员":"输入你的名字开始"}</div>
+      <input class="input" id="newName" placeholder="输入名字（如：小王）" style="text-align:center;margin-bottom:10px" onkeydown="if(event.key==='Enter')addUser()">
+      <button class="btn-primary" onclick="addUser()">加入</button>
+    </div>
+  </div>`;
+}
+
+function loginAs(id){cur=id;localStorage.setItem(SC,id);const u=cu();if(u)toast("👋 欢迎回来 "+u.name);render()}
+
+function addUser(){
+  const input=document.getElementById("newName"),name=input.value.trim();
+  if(!name)return;
+  const idx=users.length;
+  const u={id:name.toLowerCase().replace(/\s/g,"_")+"_"+Date.now().toString(36).slice(-3),name,color:UC[idx%UC.length],avatar:UA[idx%UA.length]};
+  users.push(u);cur=u.id;save();toast("👋 欢迎 "+name);render();
+}
+
+function rHeader(){
+  const u=cu(),ms=cards.filter(c=>c.owner===cur&&c.status==="已售");
+  const mp=ms.reduce((s,c)=>s+(c.sellPrice||0)-c.costPrice,0);
+  return`<div class="header"><div class="header-row"><div>
+    <div class="logo">⛄ 雪人球星卡</div>
+    <div class="subtitle"><span style="color:${u.color};font-weight:700">${u.avatar} ${esc(u.name)}</span> · 利润追踪</div>
+  </div><div style="text-align:right">
+    <div class="hp-val" style="color:${mp>=0?"#00b894":"#e74c3c"}">${mp>=0?"+":""}${sh(mp)}</div>
+    <div class="hp-label">我的利润</div>
+  </div></div></div>`;
+}
+
+function rContent(){
+  if(view==="dashboard")return rDash();
+  if(view==="inventory")return rInv();
+  if(view==="sold")return rSold();
+  return"";
+}
+
+function rDash(){
+  const my=cards.filter(c=>c.owner===cur),ms=my.filter(c=>c.status==="已售"),mi=my.filter(c=>c.status==="库存");
+  const rev=ms.reduce((s,c)=>s+(c.sellPrice||0),0),cost=ms.reduce((s,c)=>s+c.costPrice,0),prof=rev-cost;
+  const ic=mi.reduce((s,c)=>s+c.costPrice,0),pr=rev?((prof/rev)*100).toFixed(0):0,ap=ms.length?prof/ms.length:0;
+
+  let h=`<div class="stat-grid">
+    <div class="stat-box" style="border:1px solid #00b89418"><div class="stat-label">总利润</div><div class="stat-value" style="color:#00b894">${sh(prof)}</div><div class="stat-sub">利润率 ${pr}%</div></div>
+    <div class="stat-box" style="border:1px solid #f0932b18"><div class="stat-label">总营业额</div><div class="stat-value" style="color:#f0932b">${sh(rev)}</div><div class="stat-sub">已售 ${ms.length} 张</div></div>
+    <div class="stat-box" style="border:1px solid #4fc3f718"><div class="stat-label">库存</div><div class="stat-value" style="color:#4fc3f7">${mi.length} 张</div><div class="stat-sub">成本 ${sh(ic)}</div></div>
+    <div class="stat-box" style="border:1px solid #6c5ce718"><div class="stat-label">均利润/张</div><div class="stat-value" style="color:#6c5ce7">${sh(ap)}</div><div class="stat-sub">共 ${my.length} 张</div></div>
+  </div>`;
+
+  // Leaderboard
+  if(users.length>1){
+    let lb=users.map(u=>{const s=cards.filter(c=>c.owner===u.id&&c.status==="已售"),i=cards.filter(c=>c.owner===u.id&&c.status==="库存");
+    return{...u,sc:s.length,ic:i.length,p:s.reduce((a,c)=>a+(c.sellPrice||0)-c.costPrice,0),r:s.reduce((a,c)=>a+(c.sellPrice||0),0)}}).sort((a,b)=>b.p-a.p);
+    h+=`<div class="section"><div class="section-title">成员对比</div><div style="background:#13131f;border-radius:16px;padding:14px;border:1px solid #1e1e30">`;
+    lb.forEach((u,i)=>{
+      h+=`<div style="display:flex;align-items:center;gap:10px;padding:10px 0;${i<lb.length-1?"border-bottom:1px solid #1a1a28":""}">
+        <span style="font-size:20px">${u.avatar}</span><div style="flex:1">
+        <div style="font-size:14px;font-weight:700;color:${u.id===cur?u.color:"#bbb"}">${esc(u.name)}${u.id===cur?' <span style="font-size:10px;color:#555">(我)</span>':""}</div>
+        <div style="font-size:10px;color:#555">已售${u.sc}张 · 库存${u.ic}张 · 营业额${sh(u.r)}</div>
+      </div><div style="font-size:16px;font-weight:800;color:${u.p>=0?"#00b894":"#e74c3c"}">${u.p>=0?"+":""}${sh(u.p)}</div></div>`;
+    });
+    h+=`</div></div>`;
+  }
+
+  // Teams
+  const ts={};ms.forEach(c=>{if(!ts[c.team])ts[c.team]={s:0,p:0};ts[c.team].s++;ts[c.team].p+=(c.sellPrice||0)-c.costPrice});
+  const te=Object.entries(ts).sort((a,b)=>b[1].p-a[1].p);
+  if(te.length>0){
+    const mx=te[0][1].p;
+    h+=`<div class="section"><div class="section-title">我的球队利润</div><div style="background:#13131f;border-radius:16px;padding:14px;border:1px solid #1e1e30">`;
+    te.slice(0,6).forEach(([t,s])=>{
+      h+=`<div class="team-row"><div class="team-header"><span class="team-name">${esc(t)}</span><span class="team-profit">+${sh(s.p)} <span style="font-size:10px;color:#555">(${s.s}张)</span></span></div><div class="bar-track"><div class="bar-fill" style="width:${mx>0?(s.p/mx)*100:0}%"></div></div></div>`;
+    });
+    h+=`</div></div>`;
+  }
+
+  // Types
+  const tys={};ms.forEach(c=>{if(!tys[c.type])tys[c.type]={s:0,p:0};tys[c.type].s++;tys[c.type].p+=(c.sellPrice||0)-c.costPrice});
+  const tye=Object.entries(tys).sort((a,b)=>b[1].p-a[1].p);
+  if(tye.length>0){
+    h+=`<div class="section"><div class="section-title">我的卡片类型</div><div class="type-grid">`;
+    tye.forEach(([t,s])=>{h+=`<div class="type-card" style="border:1px solid ${tc(t)}22"><span class="tag" style="background:${tc(t)}">${esc(t)}</span><div class="type-profit">+${sh(s.p)}</div><div class="type-count">${s.s}张已售</div></div>`});
+    h+=`</div></div>`;
+  }
+
+  // Slow
+  const sl=mi.filter(c=>da(c.addDate)>14).sort((a,b)=>da(b.addDate)-da(a.addDate));
+  if(sl.length>0){
+    h+=`<div class="section"><div class="section-title"><span>⚠️ 滞销预警</span><span style="font-size:11px;color:#e74c3c">${sl.length}张超14天</span></div>`;
+    sl.slice(0,5).forEach(c=>{h+=rCard(c)});
+    h+=`</div>`;
+  }
+
+  h+=`<div class="section"><div class="section-title">设置</div>
+    <button class="btn-secondary" style="margin-bottom:8px;background:#1a1a28;border:1px solid #2a2a3e;color:#888;font-size:13px;font-weight:400" onclick="swUser()">🔄 切换身份（当前：${esc(cu().name)}）</button>
+    <button class="btn-secondary" style="background:#1a1a28;border:1px solid #2a2a3e;color:#555;font-size:13px;font-weight:400" onclick="cfmClear()">🗑 清空所有数据</button>
+  </div>`;
+  return h;
+}
+
+function rCard(c){
+  const p=(c.sellPrice||0)-c.costPrice,isO=c.owner===cur,ow=users.find(u=>u.id===c.owner),oc=ow?ow.color:"#555",on=ow?ow.name:"?";
+  let act="";
+  if(c.status==="已售")act=`<div style="font-size:16px;font-weight:800;color:${p>=0?"#00b894":"#e74c3c"}">${p>=0?"+":""}${sh(p)}</div><div style="font-size:10px;color:#555">${sh(c.costPrice)}→${sh(c.sellPrice)}</div>`;
+  else if(isO)act=`<div style="display:flex;gap:6px"><button class="btn-sell" onclick="openSell('${c.id}')">卖出</button><button class="btn-del" onclick="delCard('${c.id}')">✕</button></div>`;
+  else act=`<div style="font-size:12px;color:#555">进价 ${sh(c.costPrice)}</div>`;
+
+  return`<div class="card-row" style="border-color:${isO?oc+"22":"#1e1e30"}"><div class="card-row-inner"><div class="card-info">
+    <div><span class="card-player">${esc(c.player)}</span><span class="card-id">${c.id}</span></div>
+    <div class="card-tags"><span class="tag" style="background:${tc(c.type)}">${esc(c.type)}</span>${c.numbering?`<span class="tag" style="background:#2d2d44">${esc(c.numbering)}</span>`:""}<span style="font-size:11px;color:#555">${esc(c.team)}</span><span style="font-size:9px;font-weight:700;color:${oc};background:${oc}18;padding:1px 7px;border-radius:10px">${esc(on)}</span></div>
+    <div class="card-meta">${esc(c.platform)}进 · ${fd(c.addDate)}${c.status==="已售"?` · ${esc(c.sellPlatform||"抖音")}售 · ${fd(c.sellDate)}`:""}${c.status==="库存"?` · 已${da(c.addDate)}天`:""}</div>
+  </div><div class="card-actions">${act}</div></div></div>`;
+}
+
+function rInv(){
+  const all=cards.filter(c=>c.status==="库存"),fl=all.filter(c=>{
+    const ms=!search||c.player.includes(search)||c.id.toLowerCase().includes(search.toLowerCase())||c.team.includes(search);
+    return ms&&(fType==="全部"||c.type===fType)&&(fOwner==="全部"||c.owner===fOwner);
+  }),tc2=fl.reduce((s,c)=>s+c.costPrice,0);
+  let h=`<div class="section"><input class="input" id="si" placeholder="搜索球员、编号、球队..." value="${esc(search)}" oninput="uSearch(this.value)" style="margin-bottom:10px">${rOChips()}${rTChips()}
+  <div class="section-title"><span>库存 ${fl.length}/${all.length}</span><span style="font-size:11px;color:#555">成本 ${sh(tc2)}</span></div>`;
+  if(!fl.length)h+=`<div class="empty">${search||fType!=="全部"||fOwner!=="全部"?"没有匹配的卡片":"库存为空，点 + 进货"}</div>`;
+  else fl.forEach(c=>{h+=rCard(c)});
+  return h+`</div>`;
+}
+
+function rSold(){
+  const all=cards.filter(c=>c.status==="已售"),fl=all.filter(c=>{
+    const ms=!search||c.player.includes(search)||c.id.toLowerCase().includes(search.toLowerCase())||c.team.includes(search);
+    return ms&&(fType==="全部"||c.type===fType)&&(fOwner==="全部"||c.owner===fOwner);
+  }).sort((a,b)=>new Date(b.sellDate)-new Date(a.sellDate)),tp=fl.reduce((s,c)=>s+(c.sellPrice||0)-c.costPrice,0);
+  let h=`<div class="section"><input class="input" id="si" placeholder="搜索球员、编号、球队..." value="${esc(search)}" oninput="uSearch(this.value)" style="margin-bottom:10px">${rOChips()}${rTChips()}
+  <div class="section-title"><span>已售 ${fl.length}</span><span style="font-size:11px;color:#00b894">利润 +${sh(tp)}</span></div>`;
+  if(!fl.length)h+=`<div class="empty">暂无已售卡片</div>`;
+  else fl.forEach(c=>{h+=rCard(c)});
+  return h+`</div>`;
+}
+
+function rTChips(){let h=`<div class="chip-row">`;["全部",...CARD_TYPES].forEach(t=>{h+=`<button class="chip ${fType===t?"active":""}" onclick="sFType('${t}')">${t}</button>`});return h+`</div>`}
+function rOChips(){let h=`<div class="chip-row"><button class="chip ${fOwner==="全部"?"active":""}" onclick="sFOwner('全部')">全部人</button>`;users.forEach(u=>{const a=fOwner===u.id;h+=`<button class="chip" style="background:${a?u.color:"#1e1e30"};color:${a?"#fff":"#666"}" onclick="sFOwner('${u.id}')">${u.avatar} ${esc(u.name)}</button>`});return h+`</div>`}
+
+function rNav(){
+  return`<div class="nav">
+    <button class="nav-btn ${view==="dashboard"?"active":""}" onclick="sv('dashboard')"><span class="icon">📊</span>总览</button>
+    <button class="nav-btn ${view==="inventory"?"active":""}" onclick="sv('inventory')"><span class="icon">📦</span>库存</button>
+    <button class="nav-add" onclick="openAdd()">+</button>
+    <button class="nav-btn ${view==="sold"?"active":""}" onclick="sv('sold')"><span class="icon">💰</span>已售</button>
+  </div>`;
+}
+
+// MODALS
+function openAdd(){
+  const u=cu(),to=CSL_TEAMS.map(t=>`<option value="${t}">${t}</option>`).join(""),
+  tyo=CARD_TYPES.map(t=>`<option value="${t}">${t}</option>`).join(""),
+  po=PLATFORMS.map(t=>`<option value="${t}">${t}</option>`).join("");
+  const m=document.createElement("div");m.id="modal";m.className="modal-overlay";
+  m.onclick=e=>{if(e.target===m)m.remove()};
+  m.innerHTML=`<div class="modal-sheet" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div class="modal-title" style="background:linear-gradient(135deg,#4fc3f7,#81d4fa);-webkit-background-clip:text;-webkit-text-fill-color:transparent">📥 新卡入库</div>
+    <div style="font-size:11px;color:#555;margin-bottom:18px">录入人：${u.avatar} ${esc(u.name)}</div>
+    <div class="input-group"><div class="input-label">球员名称 *</div><input class="input" id="aP" placeholder="如：王大雷"></div>
+    <div class="input-group"><div class="input-label">所属球队</div><select class="input" id="aT">${to}</select></div>
+    <div class="input-row" style="margin-bottom:12px"><div style="flex:1"><div class="input-label">卡片类型</div><select class="input" id="aTy">${tyo}</select></div><div style="flex:1"><div class="input-label">编号</div><input class="input" id="aN" placeholder="如 /50"></div></div>
+    <div class="input-row" style="margin-bottom:12px"><div style="flex:1"><div class="input-label">进价 (元) *</div><input class="input" id="aPr" placeholder="0.00" type="number" inputmode="decimal"></div><div style="flex:1"><div class="input-label">进货平台</div><select class="input" id="aPl">${po}</select></div></div>
+    <div class="input-group"><div class="input-label">备注</div><input class="input" id="aNo" placeholder="选填"></div>
+    <button class="btn-primary" onclick="doAdd()" style="margin-top:4px">确认入库</button>
+    <div style="margin-top:16px;border-top:1px solid #2a2a3e;padding-top:16px">
+      <div style="font-size:13px;font-weight:700;color:#777;margin-bottom:8px">📋 批量导入</div>
+      <div style="font-size:11px;color:#555;margin-bottom:8px">每行一张卡，格式：球员 球队 类型 编号 进价 平台</div>
+      <textarea class="batch-area" id="bI" placeholder="王大雷 山东泰山 签字卡 /50 200 卡淘&#10;武磊 上海海港 带编卡 /99 150 TC卡藏"></textarea>
+      <button class="btn-primary" onclick="doBatch()" style="margin-top:8px;background:linear-gradient(135deg,#6c5ce7,#a29bfe)">批量导入</button>
+    </div>
+  </div>`;
+  document.body.appendChild(m);
+}
+
+function doAdd(){
+  const p=document.getElementById("aP").value.trim(),pr=document.getElementById("aPr").value;
+  if(!p||!pr){toast("请填写球员和进价");return}
+  const pf=(cu().name||"XR").slice(0,2).toUpperCase();
+  cards.unshift({id:gid(pf),player:p,team:document.getElementById("aT").value,type:document.getElementById("aTy").value,numbering:document.getElementById("aN").value.trim(),costPrice:Number(pr),sellPrice:null,status:"库存",addDate:td(),sellDate:null,platform:document.getElementById("aPl").value,sellPlatform:"",note:document.getElementById("aNo").value.trim(),owner:cur});
+  save();document.getElementById("modal").remove();toast("✅ "+p+" 已入库");render();
+}
+
+function doBatch(){
+  const text=document.getElementById("bI").value.trim();
+  if(!text){toast("请输入数据");return}
+  const lines=text.split("\n").filter(l=>l.trim());let cnt=0;
+  const pf=(cu().name||"XR").slice(0,2).toUpperCase();
+  lines.forEach(line=>{
+    const parts=line.trim().split(/\s+/);if(parts.length<3)return;
+    const player=parts[0],team=CSL_TEAMS.find(t=>t.includes(parts[1]))||parts[1],type=CARD_TYPES.find(t=>t===parts[2])||"其他";
+    let num="",cp=0,plat="卡淘";
+    for(let i=3;i<parts.length;i++){const p=parts[i];if(p.startsWith("/")||p.match(/^\d+\/\d+$/))num=p;else if(!isNaN(parseFloat(p)))cp=parseFloat(p);else{const f=PLATFORMS.find(pl=>pl.includes(p)||p.includes(pl));if(f)plat=f}}
+    if(player&&cp>0){cards.unshift({id:gid(pf),player,team,type,numbering:num,costPrice:cp,sellPrice:null,status:"库存",addDate:td(),sellDate:null,platform:plat,sellPlatform:"",note:"",owner:cur});cnt++}
+  });
+  save();
+  if(cnt>0){document.getElementById("modal").remove();toast(`✅ 批量导入 ${cnt} 张卡`);render()}
+  else toast("未能识别，请检查格式");
+}
+
+function openSell(id){
+  const c=cards.find(x=>x.id===id);if(!c)return;
+  const po=SELL_PLATFORMS.map(t=>`<option value="${t}">${t}</option>`).join("");
+  const m=document.createElement("div");m.id="modal";m.className="modal-overlay";
+  m.onclick=e=>{if(e.target===m)m.remove()};
+  m.innerHTML=`<div class="modal-sheet" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div class="modal-title">💰 卖出卡片</div>
+    <div style="font-size:13px;color:#555;margin-bottom:20px;line-height:1.6">${esc(c.player)} · ${esc(c.type)} ${esc(c.numbering||"")}<br>${esc(c.team)} · 进价 ${fmt(c.costPrice)}</div>
+    <div class="input-label">卖出价格 (元) *</div>
+    <input class="input" id="sP" placeholder="0.00" type="number" inputmode="decimal" oninput="uPP('${id}')" style="margin-bottom:10px">
+    <div class="input-label">卖出平台</div>
+    <select class="input" id="sPl" style="margin-bottom:14px">${po}</select>
+    <div id="pp"></div>
+    <button class="btn-primary" onclick="doSell('${id}')">确认卖出</button>
+  </div>`;
+  document.body.appendChild(m);
+}
+
+function uPP(id){
+  const c=cards.find(x=>x.id===id),pr=Number(document.getElementById("sP").value),pp=document.getElementById("pp");
+  if(!pr||!c){pp.innerHTML="";return}
+  const p=pr-c.costPrice,pct=((p/c.costPrice)*100).toFixed(0),cl=p>=0?"#00b894":"#e74c3c";
+  pp.innerHTML=`<div class="profit-preview" style="background:${cl}11;border:1px solid ${cl}33"><span style="font-size:11px;color:#888">利润 </span><span class="profit-preview-val" style="color:${cl}">${p>=0?"+":""}${fmt(p)}</span><span style="font-size:12px;color:#888;margin-left:6px">(${pct}%)</span></div>`;
+}
+
+function doSell(id){
+  const pr=Number(document.getElementById("sP").value),pl=document.getElementById("sPl").value;
+  if(!pr){toast("请填写卖价");return}
+  const c=cards.find(x=>x.id===id);if(!c)return;
+  c.status="已售";c.sellPrice=pr;c.sellDate=td();c.sellPlatform=pl;save();
+  document.getElementById("modal").remove();toast(`💰 ${c.player} 利润 ${pr-c.costPrice>=0?"+":""}${sh(pr-c.costPrice)}`);render();
+}
+
+function delCard(id){cards=cards.filter(c=>c.id!==id);save();toast("🗑 已删除");render()}
+function swUser(){cur=null;localStorage.removeItem(SC);render()}
+function cfmClear(){
+  const m=document.createElement("div");m.id="modal";m.className="modal-center";
+  m.onclick=e=>{if(e.target===m)m.remove()};
+  m.innerHTML=`<div class="modal-box" onclick="event.stopPropagation()">
+    <div style="font-size:18px;font-weight:800;margin-bottom:12px;color:#e74c3c">⚠️ 确认清空？</div>
+    <div style="font-size:14px;color:#888;margin-bottom:24px">所有人的卡片数据和账号都将被永久删除。</div>
+    <div style="display:flex;gap:10px"><button class="btn-secondary" style="flex:1" onclick="document.getElementById('modal').remove()">取消</button><button class="btn-primary" style="flex:1;background:linear-gradient(135deg,#e74c3c,#c0392b)" onclick="doClear()">确认清空</button></div>
+  </div>`;
+  document.body.appendChild(m);
+}
+function doClear(){cards=[];users=[];cur=null;localStorage.removeItem(SK);localStorage.removeItem(SU);localStorage.removeItem(SC);document.getElementById("modal").remove();toast("已清空");render()}
+
+function sv(v){view=v;search="";fType="全部";fOwner="全部";render();window.scrollTo(0,0)}
+function uSearch(v){search=v;reContent()}
+function sFType(v){fType=v;reContent()}
+function sFOwner(v){fOwner=v;reContent()}
+function reContent(){const a=document.getElementById("app");a.innerHTML=rHeader()+rContent()+rNav();bind()}
+function bind(){if((view==="inventory"||view==="sold")&&search){const s=document.getElementById("si");if(s){s.focus();s.setSelectionRange(search.length,search.length)}}}
+
+render();
+</script>
+</body>
+</html>
